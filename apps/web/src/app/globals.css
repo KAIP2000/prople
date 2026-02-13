@@ -1,0 +1,89 @@
+@import 'tailwindcss';
+
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  --font-sans: var(--font-manrope), sans-serif;
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-serif: var(--font-space-grotesk), serif;
+
+  /* Brand palette */
+  --color-brand: #8b5e3c;
+  --color-ink: #2c1f18;
+  --color-sand: #f6efe6;
+
+  /* Semantic tokens */
+  --color-background: #f6efe6;
+  --color-foreground: #2c1f18;
+  --color-card: #fffaf5;
+  --color-muted: #f0e4d6;
+  --color-muted-foreground: #7b614d;
+  --color-accent: #8b5e3c;
+  --color-accent-foreground: #ffffff;
+  --color-primary: #2c1f18;
+  --color-primary-foreground: #ffffff;
+  --color-border: #e7d8c9;
+  --color-ring: #8b5e3c;
+  --color-input: #e7d8c9;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-secondary: #f1e3d5;
+  --color-secondary-foreground: #2c1f18;
+}
+
+@utility container {
+  margin-inline: auto;
+  width: min(1360px, calc(100% - 2rem));
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-sand);
+    color: var(--color-ink);
+  }
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.blue-cta {
+  background:
+    radial-gradient(circle at left bottom, rgba(255, 255, 255, 0.2), transparent 22%),
+    radial-gradient(circle at right top, rgba(255, 255, 255, 0.18), transparent 18%),
+    linear-gradient(140deg, #b07a4a 0%, #8b5e3c 40%, #4f3523 100%);
+}
+
+/* Interactive card pop effect */
+.card-interactive {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(44, 31, 24, 0.12);
+}
+
+/* Interactive button lift effect */
+.btn-interactive {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(44, 31, 24, 0.15);
+}
