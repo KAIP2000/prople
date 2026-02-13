@@ -6,9 +6,15 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Building, ClipboardList, Calculator } from "lucide-react";
 
-type Role = "landlord" | "property_manager" | "accountant";
+type Role = "landlord" | "property_manager" | "accountant" | "admin";
+type OnboardingRole = Exclude<Role, "admin">;
 type TeamSize = "solo" | "small_team" | "enterprise";
 type ManagerStartMode = "add_property" | "get_invited" | "import_properties";
+
+function normalizeRole(value: Role | null): OnboardingRole | null {
+  if (value === "admin") return "property_manager";
+  return value;
+}
 
 const LANDLORD_STEPS = ["role", "profile", "property", "extra", "review", "auth"] as const;
 const MANAGER_STEPS = ["role", "business", "start", "permissions", "team", "review", "auth"] as const;
@@ -33,6 +39,7 @@ export default function OnboardingPage() {
   const [sessionId] = useState(createSessionId);
   const [stepIndex, setStepIndex] = useState(0);
   const [role, setRole] = useState<Role | null>(null);
+  const onboardingRole = normalizeRole(role);
   const [name, setName] = useState("");
   const [countryRegion, setCountryRegion] = useState("");
   const [managementMode, setManagementMode] = useState<"self_manage" | "has_manager">("self_manage");
@@ -123,11 +130,11 @@ export default function OnboardingPage() {
   }, [draft, role]);
 
   const steps =
-    role === "landlord"
+    onboardingRole === "landlord"
       ? LANDLORD_STEPS
-      : role === "property_manager"
+      : onboardingRole === "property_manager"
         ? MANAGER_STEPS
-        : role === "accountant"
+        : onboardingRole === "accountant"
           ? ACCOUNTANT_STEPS
           : LANDLORD_STEPS;
   const step = steps[stepIndex];
@@ -139,7 +146,7 @@ export default function OnboardingPage() {
     if (step === "review" && !acceptedTerms) return;
     setSaving(true);
     try {
-      if (role === "landlord") {
+      if (onboardingRole === "landlord") {
         if (step === "profile") {
           await saveLandlordProfile({ sessionId, name, countryRegion, managementMode });
         }
@@ -150,7 +157,7 @@ export default function OnboardingPage() {
           await saveLandlordExtra({ sessionId, tenants, connectBank });
         }
       }
-      if (role === "property_manager") {
+      if (onboardingRole === "property_manager") {
         if (step === "business") {
           await saveManagerBusiness({ sessionId, companyName, propertiesManaged, teamSize });
         }
@@ -164,7 +171,7 @@ export default function OnboardingPage() {
           await saveManagerTeamInvites({ sessionId, invites });
         }
       }
-      if (role === "accountant") {
+      if (onboardingRole === "accountant") {
         if (step === "profile") {
           await saveAccountantProfile({ sessionId, name, firmName, regionCoverage, certifications });
         }
@@ -178,7 +185,7 @@ export default function OnboardingPage() {
     }
   };
 
-  const handleSelectRole = async (selected: Role) => {
+  const handleSelectRole = async (selected: OnboardingRole) => {
     if (!sessionId) return;
     setRole(selected);
     await saveRole({ sessionId, role: selected });
@@ -206,7 +213,7 @@ export default function OnboardingPage() {
   };
 
   const reviewFields = useMemo(() => {
-    if (role === "landlord") {
+    if (onboardingRole === "landlord") {
       return [
         { label: "Name", value: name || "Not provided" },
         { label: "Region", value: countryRegion || "Not provided" },
@@ -218,7 +225,7 @@ export default function OnboardingPage() {
         { label: "Lease uploads", value: `${leaseCount} files` },
       ];
     }
-    if (role === "property_manager") {
+    if (onboardingRole === "property_manager") {
       return [
         { label: "Company", value: companyName || "Not provided" },
         { label: "Properties", value: propertiesManaged || "Not provided" },
@@ -299,7 +306,7 @@ export default function OnboardingPage() {
             </section>
           ) : null}
 
-          {role === "landlord" && step === "profile" ? (
+          {onboardingRole === "landlord" && step === "profile" ? (
             <section className="grid gap-6">
               <div>
                 <h2 className="font-display text-3xl font-bold text-slate-900">Complete your profile</h2>
@@ -329,7 +336,7 @@ export default function OnboardingPage() {
             </section>
           ) : null}
 
-          {role === "landlord" && step === "property" ? (
+          {onboardingRole === "landlord" && step === "property" ? (
             <section className="grid gap-6">
               <div>
                 <h2 className="font-display text-3xl font-bold text-slate-900">Add your first property</h2>
@@ -356,7 +363,7 @@ export default function OnboardingPage() {
             </section>
           ) : null}
 
-          {role === "landlord" && step === "extra" ? (
+          {onboardingRole === "landlord" && step === "extra" ? (
             <section className="grid gap-6">
               <div>
                 <h2 className="font-display text-3xl font-bold text-slate-900">Extra setup</h2>
@@ -407,7 +414,7 @@ export default function OnboardingPage() {
             </section>
           ) : null}
 
-          {role === "property_manager" && step === "business" ? (
+          {onboardingRole === "property_manager" && step === "business" ? (
             <section className="grid gap-6">
               <div>
                 <h2 className="font-display text-3xl font-bold text-slate-900">Complete your profile</h2>
@@ -438,7 +445,7 @@ export default function OnboardingPage() {
             </section>
           ) : null}
 
-          {role === "property_manager" && step === "start" ? (
+          {onboardingRole === "property_manager" && step === "start" ? (
             <section className="grid gap-4">
               <div>
                 <h2 className="font-display text-3xl font-bold text-slate-900">How do you want to start?</h2>
@@ -456,7 +463,7 @@ export default function OnboardingPage() {
             </section>
           ) : null}
 
-          {role === "property_manager" && step === "permissions" ? (
+          {onboardingRole === "property_manager" && step === "permissions" ? (
             <section className="grid gap-4">
               <div>
                 <h2 className="font-display text-3xl font-bold text-slate-900">Permissions setup</h2>
@@ -474,7 +481,7 @@ export default function OnboardingPage() {
             </section>
           ) : null}
 
-          {role === "property_manager" && step === "team" ? (
+          {onboardingRole === "property_manager" && step === "team" ? (
             <section className="grid gap-6">
               <div>
                 <h2 className="font-display text-3xl font-bold text-slate-900">Invite your team</h2>
@@ -510,7 +517,7 @@ export default function OnboardingPage() {
             </section>
           ) : null}
 
-          {role === "accountant" && step === "profile" ? (
+          {onboardingRole === "accountant" && step === "profile" ? (
             <section className="grid gap-6">
               <div>
                 <h2 className="font-display text-3xl font-bold text-slate-900">Complete your profile</h2>
@@ -537,7 +544,7 @@ export default function OnboardingPage() {
             </section>
           ) : null}
 
-          {role === "accountant" && step === "controls" ? (
+          {onboardingRole === "accountant" && step === "controls" ? (
             <section className="grid gap-5">
               <div>
                 <h2 className="font-display text-3xl font-bold text-slate-900">Controls & focus</h2>
@@ -601,9 +608,9 @@ export default function OnboardingPage() {
             <section className="grid gap-5">
               <h2 className="font-display text-3xl font-bold text-slate-900">Create your account</h2>
               <p className="text-slate-600">
-                {role === "landlord"
+                {onboardingRole === "landlord"
                   ? "Sign in to manage your properties."
-                  : role === "accountant"
+                  : onboardingRole === "accountant"
                     ? "Sign in to audit and export transactions."
                     : "Sign in to manage properties for your clients."}
               </p>

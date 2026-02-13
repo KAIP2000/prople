@@ -3,7 +3,6 @@
 import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
@@ -63,15 +62,15 @@ export default function LandlordDashboardPage() {
   const profile = useQuery(api.onboarding.getCurrentProfile);
   const dashboard = useQuery(api.dashboard.getDashboard, {});
   const markWelcomeSeen = useMutation(api.onboarding.markWelcomeSeen);
-  const params = useSearchParams();
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
-    if (!profile) return;
+    if (!profile || typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
     if (params.get("welcome") === "1" && !profile.welcomeSeenAt) {
       setShowWelcome(true);
     }
-  }, [params, profile]);
+  }, [profile]);
 
   if (profile && profile.role !== "landlord") {
     return (

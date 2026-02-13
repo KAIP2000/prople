@@ -5,9 +5,9 @@ import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
-export default function CompleteOnboardingPage() {
+function CompleteOnboardingContent() {
   const { isSignedIn, isLoaded, getToken } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -130,5 +130,13 @@ export default function CompleteOnboardingPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function CompleteOnboardingPage() {
+  return (
+    <Suspense fallback={null}>
+      <CompleteOnboardingContent />
+    </Suspense>
   );
 }

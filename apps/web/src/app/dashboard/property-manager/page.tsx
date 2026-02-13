@@ -4,7 +4,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { CheckCircle2, MapPin, TriangleAlert } from "lucide-react";
 
 const fallback = {
@@ -36,7 +36,7 @@ const fallback = {
   ],
 };
 
-export default function PropertyManagerDashboardPage() {
+function PropertyManagerDashboardContent() {
   const profile = useQuery(api.onboarding.getCurrentProfile);
   const dashboard = useQuery(api.dashboard.getDashboard, {});
   const markWelcomeSeen = useMutation(api.onboarding.markWelcomeSeen);
@@ -230,5 +230,13 @@ export default function PropertyManagerDashboardPage() {
         </div>
       ) : null}
     </main>
+  );
+}
+
+export default function PropertyManagerDashboardPage() {
+  return (
+    <Suspense fallback={null}>
+      <PropertyManagerDashboardContent />
+    </Suspense>
   );
 }
