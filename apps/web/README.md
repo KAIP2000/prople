@@ -44,6 +44,24 @@ anchors, external links, and client-cached navigation do not reach middleware.
 VPNs and proxies can affect the location. Local development does not emit these
 events. Query strings, cookies, and authentication tokens are not logged.
 
+### Opt-in precise location
+
+The optional Prople card explains that coordinates, accuracy, and IP will be stored
+in server logs. Only clicking **Use my location**, granting browser permission,
+and obtaining a position triggers `POST /api/location`. **Not now** dismisses the
+card for the tab session. Permission denial, unsupported browsers, timeouts, and
+submission errors show an explanation and allow continued use of the site.
+
+After deployment, search Vercel runtime **Logs** for `location_shared` at info
+level. Each event includes `ip`, `latitude`, `longitude`, `accuracyMeters`,
+`mapUrl`, and `streetViewUrl`. Open the URLs to inspect the location or available
+Street View imagery. These are browser-reported coordinates, not a verified
+address; accuracy varies and Street View coverage is not guaranteed. No reverse
+geocoding service is called. Locations are logged only when `VERCEL=1`.
+
+The endpoint validates consent, coordinates, JSON size, and same-origin requests.
+Browser-provided locations can be spoofed; do not use them as proof of identity.
+
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

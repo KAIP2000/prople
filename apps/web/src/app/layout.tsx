@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Space_Grotesk } from "next/font/google";
 import { cn } from "@/lib/utils";
 import ConvexClientProvider from "./ConvexClientProvider";
+import LocationPrompt from "@/components/LocationPrompt";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn(manrope.variable, spaceGrotesk.variable, "text-[--color-ink] bg-[--color-sand]")}>
         <ConvexClientProvider>{children}</ConvexClientProvider>
+        <LocationPrompt />
       </body>
     </html>
   );
