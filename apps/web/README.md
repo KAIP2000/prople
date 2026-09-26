@@ -31,6 +31,19 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
+### Visitor location logs
+
+On Vercel, middleware writes a JSON `page_visit` event for page GET requests,
+including the path, public IP, and Vercel's approximate country, region, and city.
+After deploying, open the project's **Logs**, include middleware / info logs,
+and search for `page_visit`. Missing location fields are `null`.
+
+Prefetches, API calls, and static assets are excluded. These are server request
+logs, not a count of human clicks: bots and reloads can appear, while same-page
+anchors, external links, and client-cached navigation do not reach middleware.
+VPNs and proxies can affect the location. Local development does not emit these
+events. Query strings, cookies, and authentication tokens are not logged.
+
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
